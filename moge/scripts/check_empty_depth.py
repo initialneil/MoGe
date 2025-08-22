@@ -245,6 +245,7 @@ def main():
     print(f"mask_root: {mask_root}")
     print(f"depth_root: {depth_root}")
     print(f"empty_img_root: {empty_img_root}")
+    print(f"empty_mask_root: {empty_mask_root}")
     print(f"empty_depth_root: {empty_depth_root}")
     print(f"err_root: {err_root}")
 
