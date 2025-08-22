@@ -22,6 +22,8 @@ from accelerate import Accelerator
 import shutil
 from tqdm import tqdm
 
+IMAGE_SUFFIX = ("png", "jpg", "jpeg", "webp")
+
 class ImageFileDataset(Dataset):
     def __init__(self, img_dir, file_list, transform=tvt.ToTensor()):
         self.img_dir = img_dir
@@ -104,7 +106,7 @@ def main():
     # walk for image directories
     total_folders = 0
     for img_dir, dirs, files in os.walk(image_root):
-        fns = [f for f in files if f.lower().endswith(('.png', '.jpg'))]
+        fns = [f for f in files if Path(f).suffix.lstrip('.').lower() in IMAGE_SUFFIX]
         img_count = len(fns)
         if img_count > 0:
             total_folders += 1
@@ -112,7 +114,7 @@ def main():
     # walk and process
     folder_count = 0
     for img_dir, dirs, files in os.walk(image_root):
-        fns = [f for f in files if f.lower().endswith(('.png', '.jpg'))]
+        fns = [f for f in files if Path(f).suffix.lstrip('.').lower() in IMAGE_SUFFIX]
         img_count = len(fns)
         if img_count > 0:
             folder_count += 1
