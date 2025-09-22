@@ -209,7 +209,9 @@ def run_vlm_check(func_args):
     model = func_args['model']
     if osp.exists(check_fn):
         print(f'check exists: {check_fn}')
-        return
+        with open(check_fn, 'r') as fp:
+            msg = json.load(fp)
+        return msg
     
     msg = vlm_check(image_path, empty_path, model=model)
     if msg is not None:
@@ -225,6 +227,7 @@ def run_vlm_check(func_args):
         os.makedirs(osp.dirname(check_fn), exist_ok=True)
         with open(check_fn, 'w') as fp:
             json.dump(msg, fp, indent=4)
+    return msg
 
 @dataclass
 class Args:
@@ -250,9 +253,6 @@ def main():
         image_path = to_abs_path(item['image'])
         empty_path = to_abs_path(item['empty'])
         check_fn = osp.join(check_dir, item['image'] + '.json')
-        if osp.exists(check_fn):
-            print(f'check exists: {check_fn}')
-            continue
 
         func_args_list.append({
             'image': image_path,
@@ -276,6 +276,14 @@ def main():
     if total_usage_stats['total_images'] > 0:
         avg_cost = total_usage_stats['total_cost'] / total_usage_stats['total_images']
         print(f"Average cost per image: ${avg_cost:.4f}")
+
+    # select item with check result
+    new_data_list = []
+    for item, info in zip(data_list, all_infos):
+        if info is not None:
+            if info.get('all_passed'):
+                new_data_list.append(item)
+    write(new_data_list, output_json_fn)
 
     pass
 
