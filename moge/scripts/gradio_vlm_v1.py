@@ -21,6 +21,7 @@ class Args:
     data_root: str
     input_json_fn: str
     model: str  # Can be comma-separated list of models
+    port: int = 8080  # Port for Gradio server
 
 def main():
     args = tyro.cli(Args)
@@ -194,7 +195,7 @@ def main():
         if is_multi_model:
             gr.Markdown(f"# VLM Check Results - Model Comparison ({len(display_list)} items with different results)")
         else:
-            gr.Markdown(f"# VLM Check Results ({len(display_list)} failed items)")
+            gr.Markdown(f"# VLM Check Results ({len(display_list)} failed items, total {len(data_list)} items)")
         
         # First row: side by side images
         with gr.Row():
@@ -301,8 +302,10 @@ def main():
     demo.launch(
         share=False, 
         server_name="0.0.0.0", 
-        server_port=8080,
-        allowed_paths=["/home/szj/sdc/data/nb_empty_syn"]
+        server_port=args.port,
+        allowed_paths=[
+            "/home/szj/sdc/data",
+        ]
     )
 
 

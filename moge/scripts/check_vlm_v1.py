@@ -97,11 +97,14 @@ INSTRUCTION = dedent("""\
             describe: the second image added a ceiling fan.
             passed: False
         ceiling_check:
+            describe: the second image changed the ceiling opening to a light.
+            passed: False
+        ceiling_check:
             describe: the second image changed the appearance of the ceiling lamp.
             passed: True
         ceiling_check:
-            describe: the second image changed the ceiling opening to a light.
-            passed: False
+            describe: the second image replaced the old ceiling lamp with a large chandelier at the same location.
+            passed: True
         kitchen_island_check:
             describe: the room is not kitchen
             passed: True
@@ -235,6 +238,7 @@ class Args:
     input_json_fn: str
     output_json_fn: str
     model: str
+    max_workers: int = 8
 
 def main():
     args = tyro.cli(Args)
@@ -262,7 +266,7 @@ def main():
         })
 
     all_infos = parallel_foreach(run_vlm_check, func_args_list,
-                                 max_workers=8, show_tqdm=True)
+                                 max_workers=args.max_workers, show_tqdm=True)
 
     # Print total usage summary
     print("\n" + "="*50)
